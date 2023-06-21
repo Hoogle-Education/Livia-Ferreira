@@ -11,12 +11,18 @@ public class IntegerTree {
         return root == null;
     }
 
-    void updateHeight(Node node) {
-        node.height = 1 + max(node.right.height, node.left.height);
+    int updateHeight(Node node) {
+        if(node == null)
+            return 0;
+
+        var alturaEsquerda = updateHeight(node.left);
+        var alturaDireita = updateHeight(node.right);
+
+        return node.height = 1 + max(alturaEsquerda, alturaDireita);
     }
 
     private int getBalance(Node node) {
-        return (node == null) ? 0 : (node.right.height - node.left.height);
+        return (node == null) ? 0 : (updateHeight(node.right) - updateHeight(node.left));
     }
 
     public void add(int element) {
@@ -41,7 +47,7 @@ public class IntegerTree {
             node.right = add(element, node.right);
         }
 
-        return node;
+        return balance(node);
     }
 
     public boolean hasValue(int value) {
@@ -112,6 +118,7 @@ public class IntegerTree {
 
         Node toRemove = null;
 
+        // removemos a esq ou a dir do no que chamou a funcao
         if(node.left.value == value)
             toRemove = node.left;
         else if(node.right.value == value)
@@ -131,9 +138,13 @@ public class IntegerTree {
             return true;
         }
 
-        return (value < node.value) ?
+
+        var resposta = (value < node.value) ?
                 remove(value, node.left) :
                 remove(value, node.right);
+
+        balance(node);
+        return resposta;
     }
 
     private Node theMostLeftNodeFrom(Node node) {
@@ -148,6 +159,7 @@ public class IntegerTree {
             return null;
         }
 
+        updateHeight(node);
         int balance = getBalance(node);
         if( abs(balance) <= 1) {
             return node;
@@ -169,6 +181,50 @@ public class IntegerTree {
         }
 
         return node;
+    }
+
+    public Node leftRotation(Node raiz) {
+        Node x = raiz.right;
+        Node y = x.left;
+        x.left = raiz;
+        raiz.right = y;
+        updateHeight(raiz);
+        updateHeight(x);
+        return x;
+    }
+
+    public Node rightRotation(Node raiz) {
+        Node x = raiz.left;
+        Node y = x.right;
+        x.right = raiz;
+        raiz.left = y;
+        updateHeight(raiz);
+        updateHeight(x);
+        return x;
+    }
+
+    public Node doubleLeftRotation(Node raiz) {
+        if (raiz == null || raiz.right == null) {
+            return raiz; // Adiciona verificação de nulo
+        }
+
+        raiz.right = rightRotation(raiz.right);
+        raiz = leftRotation(raiz);
+
+        updateHeight(raiz);
+        return raiz;
+    }
+
+    public Node doubleRightRotation(Node raiz) {
+        if (raiz == null || raiz.left == null) {
+            return raiz; // Adiciona verificação de nulo
+        }
+
+        raiz.left = leftRotation(raiz.left);
+        raiz = rightRotation(raiz);
+
+        updateHeight(raiz);
+        return raiz;
     }
 
     @Override
