@@ -47,32 +47,82 @@ public class HashTable {
         return (h1 + i * h2) % capacidade;
     }
 
-    public int pesquisar(int chave) {
+    public Integer pesquisar(int chave) {
        int pos;
 
        for(int i = 0; i < capacidade; i++) {
-           pos = hashLinear(chave, i);
+           pos = hashDuplo(chave, i);
 
-           // se o container na pos esta vazio
-           // nao irei encontrar o que estou buscando
-           // nele e em um subsequente
            if(containers[pos] == null)
-               break;
+               continue;
 
-           if(containers[pos] == chave) {
+           if(chave == containers[pos]) {
                return pos;
            }
        }
 
-       return -1;
+       return null;
     }
 
-    public void adicionar(int chave) {
-        // TODO
+    public Integer adicionar(int chave) {
+
+        // se encontrei o elemento, paro por aqui
+        if(pesquisar(chave) != null) {
+            return null;
+        }
+
+        // se nao tiver encontrado
+        int pos;
+        for(int i = 0; i < capacidade; i++) {
+            pos = hashDuplo(chave, i);
+            // passo e vejo se a casa esta disponivel
+
+            // vou inserir na posicao disponivel
+            if (containers[pos] == null) {
+                containers[pos] = chave;
+                return pos;
+            }
+
+        }
+
+        // nao encontrei lugar para essa chave
+        return null;
     }
 
-//    abc => 0 => 2 => 4
-//    bcd => 2
 
+    public Integer remover(int chave) {
+        int pos;
 
+        for(int i = 0; i < capacidade; i ++) {
+            pos = hashDuplo(chave, i);
+
+            if(containers[pos] == null)
+                continue;
+
+            // deleto a posicao
+            if(chave == containers[pos]) {
+                containers[pos] = null;
+                return pos;
+            }
+        }
+
+        // nao foi possivel deletar
+        return null;
+    }
+
+    public void mostrar() {
+        for(int i = 0; i < capacidade; i++) {
+            Integer elemento = containers[i];
+
+            System.out.print("[ ");
+            if (elemento == null)
+                System.out.print("V");
+            else
+                System.out.print(elemento);
+
+            System.out.print(" ] ");
+        }
+
+        System.out.println();
+    }
 }
