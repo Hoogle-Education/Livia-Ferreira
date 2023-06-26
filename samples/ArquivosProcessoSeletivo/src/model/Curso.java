@@ -1,21 +1,20 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import util.Lista;
 
 public class Curso {
     private int codigo;
     private String nome;
     private int numeroDeVagas;
-    private List<Candidato> selecionados;
-    private List<Candidato> filaDeEspera;
+    private Lista<Candidato> selecionados;
+    private Lista<Candidato> filaDeEspera;
 
     public Curso(int codigo, String nome, int numeroDeVagas) {
         this.codigo = codigo;
         this.nome = nome;
         this.numeroDeVagas = numeroDeVagas;
-        this.selecionados = new ArrayList<>();
-        this.filaDeEspera = new ArrayList<>();
+        this.selecionados = new Lista<>();
+        this.filaDeEspera = new Lista<>();
     }
 
     public int getCodigo() {
@@ -42,38 +41,47 @@ public class Curso {
         this.numeroDeVagas = numeroDeVagas;
     }
 
-    public List<Candidato> getSelecionados() {
+    public Lista<Candidato> getSelecionados() {
         return selecionados;
     }
 
-    public void adicionarSelecionado(Candidato candidato) {
-        // wrapper method
-        this.selecionados.add(candidato);
-    }
-
-    public void removerSelecionado(Candidato candidato) {
-        this.selecionados.remove(candidato);
-    }
-
-    public List<Candidato> getFilaDeEspera() {
+    public Lista<Candidato> getFilaDeEspera() {
         return filaDeEspera;
     }
 
-    public void adicionarFilaDeEspera(Candidato candidato) {
-        // wrapper method
-        this.filaDeEspera.add(candidato);
+    public void adicionarCandidato(Candidato candidato) {
+        if(selecionados.size() != numeroDeVagas) {
+            if(!candidato.temCurso()) {
+                selecionados.add(candidato);
+                candidato.obteuCurso();
+            }
+        } else {
+            filaDeEspera.add(candidato);
+            candidato.entrouFilaDeEspera();
+        }
     }
 
-    public void removerFilaDeEspera(Candidato candidato) {
-        this.filaDeEspera.remove(candidato);
+    public double getNotaDeCorte() {
+        return selecionados.back().getMedia();
     }
 
     @Override
     public String toString() {
-        return "Curso{" +
-                "codigo=" + codigo +
-                ", nome='" + nome + '\'' +
-                ", numeroDeVagas=" + numeroDeVagas +
-                '}';
+        String notaDeCorte = String.format("%.2f", getNotaDeCorte());
+        String aux = nome + ' ' + notaDeCorte + "\n";
+        int quantidadeSelecionados = selecionados.size();
+        int quantidadeEspera = filaDeEspera.size();
+
+        aux += "Selecionados\n";
+        for(int i = 0; i < quantidadeSelecionados; i++) {
+            aux += selecionados.get(i).toString() + "\n";
+        }
+
+        aux += "Fila de Espera\n";
+        for(int i = 0; i < quantidadeEspera; i++) {
+            aux += filaDeEspera.get(i).toString() + "\n";
+        }
+
+        return aux;
     }
 }

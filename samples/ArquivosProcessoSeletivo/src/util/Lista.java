@@ -1,9 +1,13 @@
 package util;
 
-public class Lista<T> {
+import java.util.ArrayList;
+import java.util.List;
 
-    private No<T> primeiro;
-    private No<T> ultimo;
+public class Lista<T> {
+    // generico para que a lista seja reutilizavel
+
+    protected No<T> primeiro;
+    protected No<T> ultimo;
 
     public boolean isEmpty() {
         return primeiro == null;
@@ -30,10 +34,11 @@ public class Lista<T> {
         if (isEmpty()) {
             primeiro = paraAdicionar;
             ultimo = primeiro;
+            return;
         }
 
         ultimo.setProximo(paraAdicionar);
-        // TODO falta configurar o anterior da lista duplamento encadeada
+        paraAdicionar.setAnterior(ultimo);
         ultimo = ultimo.getProximo();
     }
 
@@ -52,41 +57,38 @@ public class Lista<T> {
         return aux.getValor();
     }
 
-    private void replace(int index, T valor) {
-        if(index < 0 || index >= size())
-            return;
+    public T back() {
+        if(ultimo == null)
+            return null;
 
-        No<T> aux = primeiro;
-        int indexAtual = 0;
-
-        while(indexAtual != index) {
-            aux = aux.getProximo();
-            indexAtual++;
-        }
-
-        aux.setValor(valor);
-    }
-
-    public void swap(int pos1, int pos2) {
-        if(pos1 < 0 || pos1 >= size())
-            return;
-
-        if(pos2 < 0 || pos2 >= size())
-            return;
-
-        T valor1 = get(pos1);
-        T valor2 = get(pos2);
-        replace(pos1, valor2);
-        replace(pos2, valor1);
+        return ultimo.getValor();
     }
 
     public boolean remove(T valor) {
         No<T> aux = primeiro;
+        int tamanho = size();
+        boolean encontrei = false;
 
-        // TODO remover a primeira ocorrencia do elemento
-        while(aux.hasProximo()) {
-            primeiro
+        if(tamanho == 1 && primeiro.getValor().equals(valor)) {
+            this.primeiro = null;
+            this.ultimo = null;
+            return true;
         }
 
+        while(aux.hasProximo()) {
+            if(aux.getProximo().getValor().equals(valor)) {
+                encontrei = true;
+                break;
+            } else aux = aux.getProximo();
+        }
+
+        if(!encontrei)
+            return false;
+
+        // 1 -> 2 -> 3 -> 4
+        aux.setProximo(aux.getProximo().getProximo());
+        aux.getProximo().setAnterior(aux);
+        return true;
     }
+
 }

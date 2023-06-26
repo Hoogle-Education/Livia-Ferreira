@@ -7,15 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Leitor {
 
     private int quantidadeCursos;
     private int quantidadeCandidatos;
-    private List<Curso> cursos = new ArrayList<>();
-    private List<Candidato> candidatos = new ArrayList<>();
+    private Lista<Curso> cursos = new Lista<>();
+    private ListaOrdenavel<Candidato> candidatos = new ListaOrdenavel<>();
 
     public void ler(String filename) throws IOException {
         // encontrando o arquivo
@@ -89,11 +88,11 @@ public class Leitor {
         return quantidadeCandidatos;
     }
 
-    public List<Curso> getCursos() {
+    public Lista<Curso> getCursos() {
         return cursos;
     }
 
-    public List<Candidato> getCandidatos() {
+    public ListaOrdenavel<Candidato> getCandidatos() {
         return candidatos;
     }
 }
